@@ -1,26 +1,41 @@
 
-document.getElementById('execCopy').addEventListener('click', execCopy);
+const buttonEnterprise = document.getElementById("cluster-button-enterprise");
+const buttonStage = document.getElementById("cluster-button-stage");
+const buttonPublic = document.getElementById("cluster-button-public");
+const buttonClear = document.getElementById('cluster-button-execClear');
+const buttonCopy = document.getElementById('cluster-button-execCopy');
+
+const port = document.getElementById('cluster-port');
+const username = document.getElementById('cluster-username');
+const textArea = document.querySelector('#cluster-result');
+const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+
+// Copy generated command
 function execCopy() {
-    document.querySelector("#cluster-result").select();
+    textArea.select();
     document.execCommand("copy");
 }
+
+// Clear
+function execClear() {
+    textArea.textContent = '';
+}
+
+// Get enterprise clusters.
 let formSubmit =  function() {
     let range = document.getElementById('cluster-range').value;
     let exclude = document.getElementById('cluster-exclude').value;
-    let username = document.getElementById('cluster-username').value;
-    let port = document.getElementById('cluster-port').value;
     let chunkSplit = document.getElementById('cluster-chunk').value;
-    port = parseInt(port);
     chunkSplit = parseInt(chunkSplit);
-    username = username.toLowerCase();
     let valid = true;
     let msg = '';
-    if (username === '') {
+    if (username.value === '') {
         valid = false
         msg = 'Invalid username'+'\n';
     }
 
-    let loginString = `csshx --login ${username} --ssh_args "-p ${port}" data.cl`;
+    let loginString = `csshx --login ${username.value} --ssh_args "-p ${port.value}" data.cl`;
     let rangeArray = range.split(",");
     valid = isValidateRange(rangeArray);
     if (valid) {
@@ -64,16 +79,39 @@ let formSubmit =  function() {
             pritnedResult =   displayResult(chunk, loginString);
             chunkedResult += pritnedResult+'\n'+'\n';
         })
-        document.querySelector(
-            '#cluster-result'
-        ).textContent = chunkedResult;
+        textArea.textContent = chunkedResult;
 
     } else {
         fail(msg);
     }
 }
-let button = document.getElementById("cluster-button");
-button.addEventListener("click", formSubmit);
+
+//Get public clusters.
+const formSubmitPublic =  function() {
+    if (port.value !== '' || username.value.toLowerCase() !== '') {
+        textArea.textContent = `csshx --login ${username.value} --ssh_args "-p ${port.value}" data.cl[20012,30011,40011,40012,40013,40014].vanilladev.com`;
+    } else {
+        fail("Invalid port or username.");
+    }
+
+}
+
+// Get Stage clusters.
+const formSubmitStage =  function() {
+    if (port.value !== '' || username.value.toLowerCase() !== '') {
+        textArea.textContent = `csshx --login ${username.value} --ssh_args "-p ${port.value}" data.cl[10013,10014,20011,20013,20014,20024,20082].vanilladev.com`;
+    } else {
+        fail("Invalid port or username.");
+    }
+}
+
+// Event Handlers.
+buttonEnterprise.addEventListener("click", formSubmit);
+buttonPublic.addEventListener("click", formSubmitPublic);
+buttonStage.addEventListener("click", formSubmitStage);
+buttonCopy.addEventListener('click', execCopy);
+buttonClear.addEventListener('click', execClear);
+toggleSwitch.addEventListener('change', switchTheme, false);
 
 // Validate Range.
 function isValidateRange(rangeArray) {
@@ -124,7 +162,7 @@ function fail(msg) {
     alert(msg);
 }
 
-
+// Split clusters to chunks.
 function splitToChunks(array, parts) {
     let result = [];
     for (let i = parts; i > 0; i--) {
@@ -132,3 +170,34 @@ function splitToChunks(array, parts) {
     }
     return result;
 }
+
+// Switch Theme.
+function switchTheme(e) {
+    if (e.target.checked) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    else {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+}
+
+
+// Dark Mode
+function switchTheme(e) {
+    if (e.target.checked) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark'); //add this
+    }
+    else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light'); //add this
+    }
+}
+
+if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    if (currentTheme === 'dark') {
+        toggleSwitch.checked = true;
+    }
+}
+

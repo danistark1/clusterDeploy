@@ -1,5 +1,9 @@
 <html>
-<title>Cluster Deploy</title>
+
+<head>
+    <title>Cluster Deploy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
 <form>
     <label> Cluster Range</label>
@@ -12,14 +16,25 @@
     <input name="cluster-port" value="" id="cluster-port" placeholder="Port #">
     <label> Chunks</label>
     <input name="cluster-chunk" value="" id="cluster-chunk" placeholder="# of chunks">
-
+    <label> Clusters Count</label>
+    <input name="cluster-count" type="text">
     <br>
     <br>
     <textarea id="cluster-result" name="cluster-result" rows="15" cols="141"></textarea>
 <br><br>
-    <button id="cluster-button" type="button">Generate</button>
-    <button id="execCopy">  Copy </button>
+    <button id="cluster-button-enterprise" type="button">Generate Enterprise</button>
+    <button id="cluster-button-public" type="button">Generate Public</button>
+    <button id="cluster-button-stage" type="button">Generate Stage</button>
+    <button id="cluster-button-execCopy">  Copy </button>
+    <button id="cluster-button-execClear">  Clear </button>
 </form>
+<div class="theme-switch-wrapper">
+    <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox" />
+        <div class="slider round"></div>
+    </label>
+    Dark Mode
+</div>
 <script src="script.js"></script>
 </body>
 </html>
